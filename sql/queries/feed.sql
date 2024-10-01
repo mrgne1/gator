@@ -17,6 +17,11 @@ returning id,
     (select name from users where users.id = user_id) as user,
     (select name from feeds where feeds.id = feed_id) as feed;
 
+-- name: DeleteFeedFollows :exec
+delete from feed_follows
+where feed_follows.user_id = (select id from users where users.name = $1)
+    and feed_follows.feed_id = (select id from feeds where feeds.url = $2);
+
 -- name: GetFeedByUrl :one
 select
     id,

@@ -120,3 +120,17 @@ func HandlerFollow(s *state.GatorState, c Command, user database.User) error {
 	fmt.Printf("%v is now following %v\n", user.Name, feed.Name)
 	return nil
 }
+
+func HandlerUnfollow(s *state.GatorState, c Command, user database.User) error {
+	if len(c.Args) < 1 {
+		return errors.New("Must provide a URL")
+	}
+
+	url := c.Args[0]
+
+	params := database.DeleteFeedFollowsParams{
+		Name: user.Name,
+		Url: url,
+	}
+	return s.Db.DeleteFeedFollows(context.Background(), params)
+}
