@@ -1,24 +1,44 @@
 package main
 
 import (
-	"gator/internal/config"
 	"fmt"
+	"gator/internal/commands"
+	"gator/internal/state"
+	"os"
+	"syscall"
+	_ "github.com/lib/pq"
 )
 
 func main() {
-	cfg, err := config.Read()
+	state, err := state.NewGatorState()
 	if err != nil {
-		fmt.Printf("Can't read config file %v\n", err)
+		fmt.Printf("Error initializing state\n%v\n", err)
 	}
 
-	err = cfg.SetUser("matt")
-	if err != nil {
-		fmt.Printf("Error setting user %v\n", err)
+	cmds := commands.NewCommands()
+	cmds.Register("login", commands.HandlerLogin)
+	cmds.Register("register", commands.HandlerRegister)
+	cmds.Register("reset", commands.HandlerReset)
+	cmds.Register("users", commands.HandlerUsers)
+	cmds.Register("agg", commands.HandlerAgg)
+	cmds.Register("addfeed", commands.HandlerAddFeed)
+	cmds.Register("feeds", commands.HandlerFeeds)
+	cmds.Register("following", commands.HandlerFollowing)
+	cmds.Register("follow", commands.HandlerFollow)
+
+	if len(os.Args) < 2 {
+		fmt.Println("Must provide a command")
+		syscall.Exit(1)
 	}
 
-	cfg, err = config.Read()
-	if err != nil {
-		fmt.Printf("Error reading file a second time %v\n", err)
+	c := commands.Command{
+		Name: os.Args[1],
+		Args: os.Args[2:],
 	}
-	fmt.Printf("Config: \n%v\n", cfg)
+
+	err = cmds.Run(&state, c)
+	if err != nil {
+		fmt.Println(err)
+		syscall.Exit(1)
+	}
 }

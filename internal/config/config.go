@@ -7,15 +7,15 @@ import (
 )
 
 type Config struct {
-	DbUrl string `json:"db_url"`
-	User string `json:"current_user_name"`
+	User             string `json:"current_user_name"`
+	ConnectionString string `json:"connection_string"`
 }
 
 var configName string = ".gatorconfig.json"
 
 func Read() (Config, error) {
 	homePath, err := os.UserHomeDir()
-	if err != nil { 
+	if err != nil {
 		return Config{}, err
 	}
 
