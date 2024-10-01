@@ -12,16 +12,11 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandlerAddFeed(s *state.GatorState, c Command) error {
+func HandlerAddFeed(s *state.GatorState, c Command, user database.User) error {
 	if len(c.Args) < 1 {
 		return errors.New("Must provide a name and url to add a feed")
 	} else if len(c.Args) < 2 {
 		return ErrNoURL
-	}
-
-	user, err := s.Db.GetUser(context.Background(), s.Config.User)
-	if err != nil {
-		return err
 	}
 
 	name := c.Args[0]
@@ -82,11 +77,9 @@ func HandlerFeeds(s *state.GatorState, c Command) error {
 	}
 	return nil
 }
-
-func HandlerFollowing(s *state.GatorState, c Command) error {
-	user := s.Config.User
-
-	follows, err := s.Db.GetFeedFollowsForUser(context.Background(), user)
+ 
+func HandlerFollowing(s *state.GatorState, c Command, user database.User) error {
+	follows, err := s.Db.GetFeedFollowsForUser(context.Background(), user.Name)
 	if err != nil {
 		return errors.New("Error finding user feeds")
 	}
@@ -98,18 +91,13 @@ func HandlerFollowing(s *state.GatorState, c Command) error {
 	return nil
 }
 
-func HandlerFollow(s *state.GatorState, c Command) error {
+func HandlerFollow(s *state.GatorState, c Command, user database.User) error {
 
 	if len(c.Args) < 1 {
 		return errors.New("Must provide a URL")
 	}
 
 	url := c.Args[0]
-
-	user, err := s.Db.GetUser(context.Background(), s.Config.User)
-	if err != nil {
-		return err
-	}
 
 	feed, err := s.Db.GetFeedByUrl(context.Background(), url)
 	if err != nil {

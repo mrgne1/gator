@@ -3,6 +3,8 @@ package commands
 import (
 	"errors"
 	"gator/internal/state"
+	"context"
+	"gator/internal/database"
 )
 
 var ErrNoUserName error = errors.New("No Username")
@@ -36,4 +38,15 @@ func (c *Commands) Run(s *state.GatorState, cmd Command) error {
 		return ErrUnknownCommand
 	}
 	return fn(s, cmd)
+}
+
+func MiddlewareLoggedIn(handler func(*state.GatorState, Command, database.User) error) func(*state.GatorState, Command) error {
+	return func (s *state.GatorState, c Command) error {
+		user, err := s.Db.GetUser(context.Background(), s.Config.User)
+		if err != nil {
+			return err
+		}
+
+		return handler(s, c, user)
+	}
 }

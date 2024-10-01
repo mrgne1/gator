@@ -21,10 +21,10 @@ func main() {
 	cmds.Register("reset", commands.HandlerReset)
 	cmds.Register("users", commands.HandlerUsers)
 	cmds.Register("agg", commands.HandlerAgg)
-	cmds.Register("addfeed", commands.HandlerAddFeed)
+	cmds.Register("addfeed", commands.MiddlewareLoggedIn(commands.HandlerAddFeed))
 	cmds.Register("feeds", commands.HandlerFeeds)
-	cmds.Register("following", commands.HandlerFollowing)
-	cmds.Register("follow", commands.HandlerFollow)
+	cmds.Register("following", commands.MiddlewareLoggedIn(commands.HandlerFollowing))
+	cmds.Register("follow", commands.MiddlewareLoggedIn(commands.HandlerFollow))
 
 	if len(os.Args) < 2 {
 		fmt.Println("Must provide a command")
