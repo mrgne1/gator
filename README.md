@@ -19,12 +19,21 @@ The format should be postgres://{{user name}}:{{user password}}@{{server}}:{{por
 Commands
 ---
 register: Create a new user in gator. 
+
 login: Switch to a user already registerd in gator
+
 users: List users. Will indicate current user
+
 addfeed: Add a feed to gator, current user will automatically follow
+
 feeds: List feeds in gator
+
 follow: Add feed to the current user's follows
+
 following: List feed follows of current user
+
 unfollow: Stop following a feed
+
 agg: continuously download feeds.
+
 browse: look at downloaded feeds
