@@ -42,6 +42,24 @@ join feed_follows on feed_follows.user_id = users.id
 join feeds on feeds.id = feed_follows.feed_id
 where users.name = $1;
 
+-- name: MarkFeedFetched :exec
+update feeds
+set last_fetched_at = now(),
+    updated_at = now()
+where id = $1;
+
+-- name: GetNextFeedToFetch :one
+select 
+    id,
+    name,
+    url,
+    user_id,
+    created_at,
+    updated_at
+from feeds
+order by last_fetched_at asc nulls first
+limit 1;
+
 -- name: ResetFeedTable :exec
 delete from feeds;
 

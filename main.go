@@ -26,6 +26,7 @@ func main() {
 	cmds.Register("following", commands.MiddlewareLoggedIn(commands.HandlerFollowing))
 	cmds.Register("follow", commands.MiddlewareLoggedIn(commands.HandlerFollow))
 	cmds.Register("unfollow", commands.MiddlewareLoggedIn(commands.HandlerUnfollow))
+	cmds.Register("browse", commands.MiddlewareLoggedIn(commands.HandleBrowse))
 
 	if len(os.Args) < 2 {
 		fmt.Println("Must provide a command")
